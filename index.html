@@ -1,104 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Blueprint.zip Status</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f6f8;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blueprint.zip Status</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f6f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
 
-    .card {
-      background: #fff;
-      padding: 24px 32px;
-      border-radius: 10px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-      text-align: center;
-      width: 320px;
-    }
+  .card {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 320px;
+  }
 
-    h1 {
-      margin: 0;
-      font-size: 1.4rem;
-      color: #333;
-    }
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
 
-    .status {
-      margin: 20px 0;
-      font-size: 1.1rem;
-      font-weight: bold;
-    }
+  .status {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 15px 0;
+  }
 
-    .up { color: #28a745; }
-    .down { color: #dc3545; }
-    .maybe { color: #ffc107; }
+  .up { color: #28a745; }
+  .down { color: #dc3545; }
+  .error { color: #ffc107; }
 
-    #details {
-      font-size: 0.9rem;
-      color: #555;
-    }
-  </style>
+  #last-checked {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 10px;
+  }
+</style>
 </head>
 <body>
 
-  <div class="card">
-    <h1>Status of blueprint.zip</h1>
-    <div id="status" class="status maybe">Checking…</div>
-    <div id="details">–</div>
-  </div>
+<div class="card">
+  <h1>Blueprint.zip Status</h1>
+  <div id="status" class="status error">Checking...</div>
+  <div id="last-checked">–</div>
+</div>
 
-  <script>
-    const TARGET_URL = 'https://blueprint.zip';  // your domain
-    const API_ENDPOINT = 'https://api.siterelic.com/up';  // Siterelic status check
-    const REFRESH_INTERVAL_MS = 60_000;  // 1 minute
+<script>
+  const STATUS_URL = "http://162.55.83.181:5000/status"; // Replace with your Flask server URL
+  const statusEl = document.getElementById('status');
+  const lastCheckedEl = document.getElementById('last-checked');
 
-    async function checkStatus() {
-      const statusEl = document.getElementById('status');
-      const detailsEl = document.getElementById('details');
+  async function updateStatus() {
+    try {
+      const resp = await fetch(STATUS_URL);
+      const data = await resp.json();
 
-      try {
-        const resp = await fetch(API_ENDPOINT, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ url: TARGET_URL })
-        });
-
-        if (!resp.ok) {
-          throw new Error(`API returned ${resp.status}`);
-        }
-
-        const data = await resp.json();
-
-        // Siterelic API returns something like { status: 'up' | 'down' | ... }
-        if (data.status === 'up') {
-          statusEl.innerText = 'UP';
+      // Set text and color based on status
+      switch(data.status) {
+        case 'up':
+          statusEl.innerText = 'UP ✅ (' + data.code + ')';
           statusEl.className = 'status up';
-        } else {
-          statusEl.innerText = 'DOWN';
+          break;
+        case 'down':
+          statusEl.innerText = 'DOWN ❌ (' + (data.code || 'N/A') + ')';
           statusEl.className = 'status down';
-        }
-
-        detailsEl.innerText = `Checked: ${new Date().toLocaleString()}`;
-      } catch (err) {
-        statusEl.innerText = 'ERROR';
-        statusEl.className = 'status maybe';
-        detailsEl.innerText = `Could not check. ${err}`;
+          break;
+        case 'error':
+          statusEl.innerText = 'ERROR ⚠️ (' + (data.code || 'N/A') + ')';
+          statusEl.className = 'status error';
+          break;
+        default:
+          statusEl.innerText = 'UNKNOWN ⚠️';
+          statusEl.className = 'status error';
       }
-    }
 
-    checkStatus();
-    setInterval(checkStatus, REFRESH_INTERVAL_MS);
-  </script>
+      lastCheckedEl.innerText = 'Last checked: ' + (data.checked_at || new Date().toLocaleTimeString());
+    } catch(err) {
+      statusEl.innerText = 'DOWN ❌';
+      statusEl.className = 'status down';
+      lastCheckedEl.innerText = 'Last checked: error';
+    }
+  }
+
+  // Initial update
+  updateStatus();
+  // Refresh every minute
+  setInterval(updateStatus, 60000);
+</script>
 
 </body>
 </html>
