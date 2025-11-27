@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blueprint.zip Status</title>
+<title>iBPFWd</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="IbpfwD - Blueprint Framework Status">
+<meta property="og:description" content="Realtime status monitor for Blueprint Framework. Check if it's up or down.">
+<meta property="og:url" content="https://yourdomain.com/">
+<meta property="og:image" content="https://optimidev.github.io/ibpfwd/og.png">
 <style>
   body {
     margin: 0;
@@ -27,8 +32,14 @@
 
   h1 {
     font-size: 1.5rem;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     color: #333;
+  }
+
+  p.subtitle {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 20px;
   }
 
   .status {
@@ -52,23 +63,13 @@
 
 <div class="card">
   <h1>IbpfwD</h1>
-  <p>stands for "is blueprint framework down?"</p>
+  <p class="subtitle">“Is Blueprint Framework Down?” — Status Monitor</p>
   <div id="status" class="status error">Checking...</div>
   <div id="last-checked">–</div>
 </div>
-<!-- FUCK, I NEED TO IMPRINT THIS SHIT -->
-<footer style="margin-top: 40px; font-size: 0.8rem; color: #666; text-align: center;">
-  <hr style="margin: 20px 0; border-color: #ddd;">
-  <strong>Impressum / Legal Notice</strong><br>
-  2nd Energy block<br>
-  94Q3+QQ<br>
-  Pripjat, Kyiv Region, Ukraine<br>
-  <br>
-  UwU<br>
-</footer>
 
 <script>
-  const STATUS_URL = "https://ibpfwapi.optimihost.com/status"; // Replace with your Flask server URL
+  const STATUS_URL = "https://ibpfwapi.optimihost.com/status"; // Your Flask backend URL
   const statusEl = document.getElementById('status');
   const lastCheckedEl = document.getElementById('last-checked');
 
@@ -77,7 +78,6 @@
       const resp = await fetch(STATUS_URL);
       const data = await resp.json();
 
-      // Set text and color based on status
       switch(data.status) {
         case 'up':
           statusEl.innerText = 'UP (' + data.code + ')';
@@ -104,9 +104,7 @@
     }
   }
 
-  // Initial update
   updateStatus();
-  // Refresh every minute
   setInterval(updateStatus, 60000);
 </script>
 
