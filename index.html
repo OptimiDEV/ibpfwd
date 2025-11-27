@@ -51,10 +51,21 @@
 <body>
 
 <div class="card">
-  <h1>Blueprint.zip Status</h1>
+  <h1>IbpfwD</h1>
+  <p>stands for "is blueprint framework down?"</p>
   <div id="status" class="status error">Checking...</div>
   <div id="last-checked">–</div>
 </div>
+<!-- FUCK, I NEED TO IMPRINT THIS SHIT -->
+<footer style="margin-top: 40px; font-size: 0.8rem; color: #666; text-align: center;">
+  <hr style="margin: 20px 0; border-color: #ddd;">
+  <strong>Impressum / Legal Notice</strong><br>
+  2nd Energy block<br>
+  94Q3+QQ<br>
+  Pripjat, Kyiv Region, Ukraine<br>
+  <br>
+  UwU<br>
+</footer>
 
 <script>
   const STATUS_URL = "https://ibpfwapi.optimihost.com/status"; // Replace with your Flask server URL
@@ -69,25 +80,25 @@
       // Set text and color based on status
       switch(data.status) {
         case 'up':
-          statusEl.innerText = 'UP ✅ (' + data.code + ')';
+          statusEl.innerText = 'UP (' + data.code + ')';
           statusEl.className = 'status up';
           break;
         case 'down':
-          statusEl.innerText = 'DOWN ❌ (' + (data.code || 'N/A') + ')';
+          statusEl.innerText = 'DOWN (' + (data.code || 'N/A') + ')';
           statusEl.className = 'status down';
           break;
         case 'error':
-          statusEl.innerText = 'ERROR ⚠️ (' + (data.code || 'N/A') + ')';
+          statusEl.innerText = 'ERROR (' + (data.code || 'N/A') + ')';
           statusEl.className = 'status error';
           break;
         default:
-          statusEl.innerText = 'UNKNOWN ⚠️';
+          statusEl.innerText = 'UNKNOWN';
           statusEl.className = 'status error';
       }
 
       lastCheckedEl.innerText = 'Last checked: ' + (data.checked_at || new Date().toLocaleTimeString());
     } catch(err) {
-      statusEl.innerText = 'DOWN ❌';
+      statusEl.innerText = 'DOWN';
       statusEl.className = 'status down';
       lastCheckedEl.innerText = 'Last checked: error';
     }
