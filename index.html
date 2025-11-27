@@ -56,8 +56,8 @@
 </div>
 
 <script>
-    const DOMAIN_URL = 'https://blueprint.zip'; // domain to monitor
-    const PROXY = 'https://api.allorigins.win/get?url='; // CORS proxy
+    const DOMAIN_URL = 'blueprint.zip'; // domain to monitor
+    const PROXY = 'https://isitup.org/api/check?url='; // CORS proxy
 
     async function checkStatus() {
         const statusEl = document.getElementById('status');
@@ -66,14 +66,14 @@
         try {
             const response = await fetch(PROXY + encodeURIComponent(DOMAIN_URL));
             if (response.ok) {
-                statusEl.innerText = 'UP ✅';
+                statusEl.innerText = 'UP';
                 statusEl.className = 'status up';
             } else {
-                statusEl.innerText = 'MIGHT BE DOWN ⚠️';
+                statusEl.innerText = 'MIGHT BE DOWN';
                 statusEl.className = 'status maybe';
             }
         } catch (err) {
-            statusEl.innerText = 'DOWN ❌';
+            statusEl.innerText = 'DOWN';
             statusEl.className = 'status down';
         }
 
