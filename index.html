@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blueprint.zip Downdetector</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .card {
+        background: #fff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        text-align: center;
+        width: 300px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .status {
+        font-size: 1.2em;
+        margin: 15px 0;
+        font-weight: bold;
+    }
+
+    .up { color: #28a745; }
+    .down { color: #dc3545; }
+    .maybe { color: #ffc107; }
+
+    #last-checked {
+        font-size: 0.9em;
+        color: #555;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Blueprint.zip Status</h1>
+    <p id="status" class="status maybe">Checking...</p>
+    <p id="last-checked"></p>
+</div>
+
+<script>
+    const DOMAIN_URL = 'https://blueprint.zip'; // domain to monitor
+    const PROXY = 'https://api.allorigins.win/get?url='; // CORS proxy
+
+    async function checkStatus() {
+        const statusEl = document.getElementById('status');
+        const lastCheckedEl = document.getElementById('last-checked');
+
+        try {
+            const response = await fetch(PROXY + encodeURIComponent(DOMAIN_URL));
+            if (response.ok) {
+                statusEl.innerText = 'UP ✅';
+                statusEl.className = 'status up';
+            } else {
+                statusEl.innerText = 'MIGHT BE DOWN ⚠️';
+                statusEl.className = 'status maybe';
+            }
+        } catch (err) {
+            statusEl.innerText = 'DOWN ❌';
+            statusEl.className = 'status down';
+        }
+
+        lastCheckedEl.innerText = 'Last checked: ' + new Date().toLocaleTimeString();
+    }
+
+    checkStatus();
+    setInterval(checkStatus, 60000); // refresh every minute
+</script>
+
+</body>
+</html>
